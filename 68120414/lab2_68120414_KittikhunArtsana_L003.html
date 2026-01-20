@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Photo Hunt Game</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600&display=swap" rel="stylesheet">
+    
+    <style>
+        /* --- ธีมเกม (Game Theme) --- */
+        body {
+            background-color: #1e1e2e; /* สีพื้นหลังน้ำเงินเข้มเกือบดำ */
+            font-family: 'Kanit', sans-serif;
+            color: white;
+            min-height: 100vh;
+        }
+
+        .navbar {
+            background: linear-gradient(90deg, #111111 0%, #2c3e50 100%);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+        }
+
+        /* --- ปรับแต่งตัวรูปภาพ (Game Cards) --- */
+        .gallery-item {
+            background-color: transparent; /* เอาพื้นหลังขาวออก */
+            border: none;
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* เด้งดึ๋ง */
+            position: relative;
+        }
+
+        .gallery-img {
+            height: 250px;
+            object-fit: cover;
+            cursor: pointer;
+            border-radius: 15px; /* มุมโค้งมน */
+            border: 5px solid #3f3f46; /* ขอบปกติสีเทาเข้ม */
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            transition: all 0.3s ease;
+        }
+
+        /* Effect ตอนเอาเมาส์ชี้ */
+        .gallery-item:hover {
+            transform: translateY(-10px);
+        }
+        .gallery-item:hover .gallery-img {
+            border-color: #ffd700; /* สีทองเวลาชี้ */
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.4);
+        }
+
+        /* --- สถานะตอนตอบ (Logic State) --- */
+        /* ถูกต้อง: ขอบเขียว + เรืองแสงนีออน */
+        .gallery-img.correct {
+            border-color: #00ff88 !important;
+            box-shadow: 0 0 30px #00ff88, 0 0 10px #00ff88 inset !important;
+            transform: scale(1.05);
+        }
+
+        /* ผิด: ขอบแดง + จางลง + ขาวดำ */
+        .gallery-img.wrong {
+            border-color: #ff4757 !important;
+            box-shadow: 0 0 20px rgba(255, 71, 87, 0.5) !important;
+            opacity: 0.4;
+            filter: grayscale(100%); /* เปลี่ยนเป็นขาวดำ */
+        }
+
+        /* กล่องข้อความแจ้งเตือน */
+        .game-alert {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
+            color: white;
+            border-radius: 15px;
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar navbar-expand-sm navbar-dark sticky-top py-3">
+        <div class="container">
+            <div class="d-flex align-items-center">
+                <span class="fs-1 me-2">🎮</span>
+                <div>
+                    <h3 class="m-0 fw-bold text-warning">PHOTO HUNT</h3>
+                    <small class="text-white-50">Kittikhun Artsana</small>
+                </div>
+            </div>
+            <button class="btn btn-warning fw-bold rounded-pill px-4 shadow-sm" onclick="resetGame()">
+                 เริ่มเกมใหม่
+            </button>
+        </div>
+    </nav>
+
+    <div class="container mt-5">
+        
+        <div id="gameAlert" class="alert game-alert text-center py-4 mb-5 shadow-lg" role="alert">
+            <h2 class="alert-heading fw-bold mb-0">ภารกิจ: ตามหาภาพแฝด </h2>
+            <p class="mb-0 mt-2 text-info">มี 2 ภาพที่เหมือนกันเป๊ะๆ หาให้เจอ!</p>
+        </div>
+
+        <div class="row">
+            <div class="col-md-4 col-sm-6 mb-4">
+                <div class="gallery-item">
+                    <img src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=600&q=80" 
+                         class="w-100 gallery-img" onclick="checkAnswer(this, false)">
+                </div>
+            </div>
+
+            <div class="col-md-4 col-sm-6 mb-4">
+                <div class="gallery-item">
+                    <img src="https://images.unsplash.com/photo-1472214103451-9374bd1c798e?auto=format&fit=crop&w=600&q=80" 
+                         class="w-100 gallery-img" onclick="checkAnswer(this, false)">
+                </div>
+            </div>
+
+            <div class="col-md-4 col-sm-6 mb-4">
+                <div class="gallery-item">
+                    <img src="https://images.unsplash.com/photo-1447752875215-b2761acb3c5d?auto=format&fit=crop&w=600&q=80" 
+                         class="w-100 gallery-img" onclick="checkAnswer(this, true)">
+                </div>
+            </div>
+
+            <div class="col-md-4 col-sm-6 mb-4">
+                <div class="gallery-item">
+                    <img src="https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?auto=format&fit=crop&w=600&q=80" 
+                         class="w-100 gallery-img" onclick="checkAnswer(this, false)">
+                </div>
+            </div>
+
+            <div class="col-md-4 col-sm-6 mb-4">
+                <div class="gallery-item">
+                    <img src="https://images.unsplash.com/photo-1447752875215-b2761acb3c5d?auto=format&fit=crop&w=600&q=80" 
+                         class="w-100 gallery-img" onclick="checkAnswer(this, true)">
+                </div>
+            </div>
+
+            <div class="col-md-4 col-sm-6 mb-4">
+                <div class="gallery-item">
+                    <img src="https://images.unsplash.com/photo-1441974231531-c6227db76b6e?auto=format&fit=crop&w=600&q=80" 
+                         class="w-100 gallery-img" onclick="checkAnswer(this, false)">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="winnerModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content bg-dark border border-warning">
+                <div class="modal-body text-center py-5">
+                    <div class="display-1 mb-3">🏆</div>
+                    <h2 class="text-warning fw-bold">MISSION COMPLETE!</h2>
+                    <p class="text-white fs-5">สุดยอด! สายตาเฉียบคมมาก</p>
+                    <button type="button" class="btn btn-lg btn-success mt-3 rounded-pill px-5" onclick="resetGame()" data-bs-dismiss="modal">
+                        เล่นอีกรอบ
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        function checkAnswer(imgElement, isCorrect) {
+            const alertBox = document.getElementById('gameAlert');
+            const alertHeading = alertBox.querySelector('h2');
+            const alertText = alertBox.querySelector('p');
+
+            // ล้าง Class เก่าออก
+            imgElement.classList.remove('correct', 'wrong');
+
+            if (isCorrect) {
+                // --- ตอบถูก ---
+                imgElement.classList.add('correct');
+                
+                // เปลี่ยน Alert เป็นสีเขียว
+                alertBox.style.background = "rgba(0, 255, 136, 0.2)";
+                alertBox.style.borderColor = "#00ff88";
+                alertHeading.innerText = "ถูกต้องครับ! ✅";
+                alertHeading.className = "alert-heading fw-bold mb-0 text-success";
+                alertText.innerText = "เจอคู่แฝดแล้ว เก่งจริงๆ";
+
+                // เรียก Modal
+                var myModal = new bootstrap.Modal(document.getElementById('winnerModal'));
+                myModal.show();
+
+            } else {
+                // --- ตอบผิด ---
+                imgElement.classList.add('wrong');
+                
+                // เปลี่ยน Alert เป็นสีแดง
+                alertBox.style.background = "rgba(255, 71, 87, 0.2)";
+                alertBox.style.borderColor = "#ff4757";
+                alertHeading.innerText = "ยังไม่ใช่นะ! ❌";
+                alertHeading.className = "alert-heading fw-bold mb-0 text-danger";
+                alertText.innerText = "ลองหาดูดีๆ อีกทีนะ";
+            }
+        }
+
+        function resetGame() {
+            // ล้างค่า CSS ทั้งหมด
+            const images = document.querySelectorAll('.gallery-img');
+            images.forEach(img => {
+                img.classList.remove('correct', 'wrong');
+            });
+
+            // คืนค่า Alert
+            const alertBox = document.getElementById('gameAlert');
+            const alertHeading = alertBox.querySelector('h2');
+            const alertText = alertBox.querySelector('p');
+
+            alertBox.style.background = "rgba(255, 255, 255, 0.1)";
+            alertBox.style.borderColor = "rgba(255,255,255,0.2)";
+            
+            alertHeading.innerText = "ภารกิจ: ตามหาภาพแฝด ";
+            alertHeading.className = "alert-heading fw-bold mb-0";
+            alertText.innerText = "มี 2 ภาพที่เหมือนกันเป๊ะๆ หาให้เจอ!";
+        }
+    </script>
+</body>
+</html>
