@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="p-5 mb-4 bg-light rounded-3 shadow-sm border">
+    <div class="container-fluid py-5 text-center">
+        <h1 class="display-5 fw-bold text-primary">ยินดีต้อนรับสู่ ABC Company</h1>
+        <p class="col-md-10 mx-auto fs-4 text-muted">
+            ผู้นำด้านนวัตกรรมและการจัดจำหน่ายสินค้าคุณภาพ 
+            เรามุ่งมั่นพัฒนาธุรกิจและรับฟังทุกความคิดเห็นจากลูกค้าเพื่อการเติบโตที่ยั่งยืน
+        </p>
+        <div class="d-grid gap-2 d-sm-flex justify-content-sm-center mt-4">
+            <a href="{% url 'products' %}" class="btn btn-primary btn-lg px-4 me-sm-3">
+                ชมแคตตาล็อกสินค้า
+            </a>
+            <a href="{% url 'feedback' %}" class="btn btn-outline-secondary btn-lg px-4">
+                ส่งข้อเสนอแนะ
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="row align-items-md-stretch text-center">
+    <div class="col-md-6 mb-3">
+        <div class="h-100 p-4 border rounded-3 bg-white shadow-sm">
+            <h2>สินค้าคุณภาพ</h2>
+            <p>พบกับสินค้าที่ผ่านการคัดสรรมาอย่างดีจำนวน 6 รายการหลักที่ตอบโจทย์ความต้องการของคุณ</p>
+        </div>
+    </div>
+    <div class="col-md-6 mb-3">
+        <div class="h-100 p-4 border rounded-3 bg-white shadow-sm">
+            <h2>บริการประทับใจ</h2>
+            <p>เราเปิดรับทุกฟีดแบ็กเพื่อนำไปทำ Data Analytics และปรับปรุงการให้บริการให้ดียิ่งขึ้น</p>
+        </div>
+    </div>
+</div>
+{% endblock %}

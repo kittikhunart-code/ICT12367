@@ -1,0 +1,12 @@
+/* โจทย์ที่ 1: CSS Hover Effect */
+.product-img {
+    transition: transform 0.3s ease, border-color 0.3s ease;
+    border: 5px solid transparent;
+    border-radius: 15px;
+}
+
+.product-img:hover {
+    transform: scale(1.08); /* ขยายภาพ (Scale) */
+    border-color: #0d6efd;  /* เปลี่ยนสีขอบ */
+    cursor: pointer;
+}

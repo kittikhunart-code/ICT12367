@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2 class="text-center mb-4">แคตตาล็อกสินค้า</h2>
+<div class="row g-4">
+    {% for i in "123456" %}
+    <div class="col-md-4">
+        <div class="card h-100 shadow-sm border-0">
+            <img src="https://via.placeholder.com/400x300" class="card-img-top product-img" alt="Product">
+            <div class="card-body text-center">
+                <h5>สินค้าชิ้นที่ {{ i }}</h5>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}
